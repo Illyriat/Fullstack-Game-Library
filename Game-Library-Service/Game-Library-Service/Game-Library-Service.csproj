@@ -28,8 +28,6 @@
   <ItemGroup>
     <Folder Include="Data\Enums\" />
     <Folder Include="Data\Dtos\" />
-    <Folder Include="Features\Game-Lib-FE\Controllers\" />
-    <Folder Include="Features\Game-Lib-FE\Logic\" />
   </ItemGroup>
 
 </Project>

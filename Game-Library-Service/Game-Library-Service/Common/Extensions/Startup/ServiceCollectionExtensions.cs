@@ -1,4 +1,5 @@
 using Game_Library_Service.Common.Mediator.Interfaces;
+using Game_Library_Service.Features.Game_Lib_FE.Logic;
 
 namespace Game_Library_Service.Common.Extensions.Startup
 {
@@ -16,6 +17,8 @@ namespace Game_Library_Service.Common.Extensions.Startup
         public static void ConfigureMediatorAndHandlers(this IServiceCollection services)
         {
             services.AddSingleton<IMediator, Mediator.Mediator>();
+
+            services.AddScoped<IQueryHandler<GetGames.Query, GetGames.Result>, GetGames.Handler>();
         }
     }
 }
