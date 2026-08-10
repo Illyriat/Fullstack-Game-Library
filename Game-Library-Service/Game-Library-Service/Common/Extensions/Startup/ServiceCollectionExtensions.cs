@@ -19,6 +19,7 @@ namespace Game_Library_Service.Common.Extensions.Startup
             services.AddSingleton<IMediator, Mediator.Mediator>();
 
             services.AddScoped<IQueryHandler<GetGames.Query, GetGames.Result>, GetGames.Handler>();
+            services.AddScoped<IQueryHandler<GetPublishers.Query, GetPublishers.Result>, GetPublishers.Handler>();
         }
     }
 }
