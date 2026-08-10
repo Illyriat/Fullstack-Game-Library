@@ -61,22 +61,30 @@ namespace Game_Library_Service.Features.Game_Lib_FE.Logic
 
         public class Handler : IQueryHandler<Query, Result>
         {
+            private const string SearchCollation = "Latin1_General_100_CI_AI";
+
             private readonly ApplicationDbContext _context;
+            private readonly bool _useSqlServerCollation;
 
             public Handler(ApplicationDbContext context)
             {
                 _context = context;
+                _useSqlServerCollation = context.Database.ProviderName?.Contains("SqlServer", StringComparison.OrdinalIgnoreCase) == true;
             }
 
             public async Task<Result> HandleAsync(Query query, CancellationToken token)
             {
                 var page = query.Page < 1 ? 1 : query.Page;
 
-                var games = _context.Games.AsQueryable();
+                var games = _context.Games.AsNoTracking();
 
                 if (!string.IsNullOrWhiteSpace(query.Name))
                 {
-                    games = games.Where(g => g.Name.Contains(query.Name));
+                    var name = query.Name.Trim();
+
+                    games = _useSqlServerCollation
+                        ? games.Where(g => EF.Functions.Like(EF.Functions.Collate(g.Name, SearchCollation), $"%{name}%"))
+                        : games.Where(g => g.Name.ToLower().Contains(name.ToLowerInvariant()));
                 }
 
                 if (query.ReleaseYear.HasValue)
