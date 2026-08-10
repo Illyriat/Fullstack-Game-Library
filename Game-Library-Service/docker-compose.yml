@@ -1,0 +1,41 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: game-library-service-db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+      - ./scripts:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    networks:
+      - game-library-network
+
+  game-library-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: game-library-service-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Local
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=game-library-service-db;Database=GameLibraryServiceDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sqlserver
+    restart: unless-stopped
+    networks:
+      - game-library-network
+
+volumes:
+  sqlserver_data:
+    driver: local
+
+networks:
+  game-library-network:
+    driver: bridge

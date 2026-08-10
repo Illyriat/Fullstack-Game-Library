@@ -1,0 +1,42 @@
+# Ignore common files and directories
+**/.git
+**/.gitignore
+**/.dockerignore
+**/Dockerfile
+**/docker-compose*.yml
+**/README.md
+**/Docker-Setup.md
+
+# Ignore build outputs
+**/bin
+**/obj
+**/out
+**/publish
+
+# Ignore IDE files
+**/.vs
+**/.vscode
+**/.idea
+**/*.user
+**/*.suo
+**/*.sln.docstates
+
+# Ignore logs
+**/logs
+**/*.log
+
+# Ignore temporary files
+**/tmp
+**/temp
+**/.tmp
+**/.temp
+
+# Ignore OS generated files
+**/.DS_Store
+**/Thumbs.db
+
+# Ignore secrets/env files (never bake these into an image layer)
+**/appsettings.secrets.json
+**/appsettings.*.secrets.json
+**/.env
+**/.env.*

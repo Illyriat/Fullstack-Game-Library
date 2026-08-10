@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Game-Library-Service.Tests/Game-Library-Service.Tests.csproj" />
+  <Project Path="Game-Library-Service/Game-Library-Service.csproj" />
+</Solution>

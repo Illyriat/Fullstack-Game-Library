@@ -1,0 +1,6 @@
+@Game_Library_Service_HostAddress = http://localhost:5221
+
+GET {{Game_Library_Service_HostAddress}}/status
+Accept: application/json
+
+###

@@ -1,0 +1,26 @@
+# This is the monorepo root. Each subproject owns its own detailed
+# .gitignore (build output, dependencies, secrets, etc.) — see:
+#   Game-Library-Service/.gitignore
+#   Game-Library-FE/.gitignore
+# Nested .gitignore files apply automatically at any depth; this file
+# only needs to cover things that can appear at the repo root itself.
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor/IDE files (when the whole monorepo is opened as one workspace)
+.vs/
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.sw?
+
+# Claude Code project-level settings, if ever created at the repo root
+/.claude/settings.local.json
