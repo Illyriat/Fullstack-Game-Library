@@ -1,6 +1,5 @@
 using Game_Library_Service.Data.Contexts;
 using Game_Library_Service.Data.Entities;
-using Game_Library_Service.Data.Enums;
 
 namespace Game_Library_Service.Tests.Data.Builders
 {
@@ -8,7 +7,7 @@ namespace Game_Library_Service.Tests.Data.Builders
     {
         private string _name = "Default Game";
         private int _releaseYear = 2000;
-        private Genre _genre = Genre.Action;
+        private Genre _genre = new GenreBuilder().Build();
         private Publisher? _publisher;
 
         public GameBuilder WithName(string name)
@@ -41,6 +40,7 @@ namespace Game_Library_Service.Tests.Data.Builders
             {
                 Name = _name,
                 ReleaseYear = _releaseYear,
+                GenreId = _genre.Id,
                 Genre = _genre,
                 Publisher = _publisher
             };
