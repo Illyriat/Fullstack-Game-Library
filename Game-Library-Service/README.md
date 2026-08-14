@@ -57,6 +57,12 @@ dotnet ef migrations add <DescriptiveName> -o Migrations
 dotnet ef database update
 ```
 
+## Seeding Sample Data
+
+Migrations only create the schema — no rows. For local dev data, `../SeedData/seeddata.sql` (repo root, sibling to this folder) wipes and reseeds `Publishers`, `Genres`, and `Games` with a realistic sample set.
+
+It's written to be run **interactively in a GUI SQL client** (Azure Data Studio / SSMS / DBeaver) connected to `GameLibraryServiceDb` — see [Connecting to and Querying the Database](#connecting-to-and-querying-the-database) below for connection details. Run it in order: the `SELECT` checks (optional), then the `DELETE FROM` / `DBCC CHECKIDENT ... RESEED, 0` block, then the `BEGIN TRANSACTION` insert block, then review and uncomment `COMMIT` once you're happy with what it inserted. Don't run the whole file as one unattended `sqlcmd -i` batch — the insert is deliberately left uncommitted until you say otherwise, and an unattended run will leave it open, holding locks.
+
 ## Running the API
 
 **Option A — Fully in Docker (recommended for a quick check):**
@@ -250,6 +256,8 @@ Game-Library-Service/                      (repo root)
 ├── Game-Library-Service.Tests/            # xUnit test project
 └── README.md                              # This file
 ```
+
+This folder sits inside the monorepo (`Game-Library/`); `../SeedData/seeddata.sql` (sibling to this folder, see [Seeding Sample Data](#seeding-sample-data) above) is where local dev sample data lives.
 
 ## Security Note
 

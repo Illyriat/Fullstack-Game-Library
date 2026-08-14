@@ -1,77 +1,50 @@
-# React + TypeScript + Vite
+# Game-Library-FE
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React 19 + TypeScript frontend (Vite) for the Game Library API — a Games browser and a Publishers browser, each with search, filtering, and pagination, plus a system/light/dark theme toggle.
 
-Currently, two official plugins are available:
+## Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Node.js** and npm.
+- The backend API running somewhere reachable — see [`Game-Library-Service/README.md`](../Game-Library-Service/README.md) for how to start it (defaults to `http://localhost:5221`).
+
+## Quick Start
+
+```bash
+npm install
+cp .env.example .env   # only needed if .env doesn't already exist
+npm run dev
+```
+
+Vite serves the app at `http://localhost:5173`.
+
+## Configuration
+
+The API base URL is read from the `VITE_API_BASE_URL` environment variable (see `src/vite-env.d.ts` for the typing). `.env` is gitignored; `.env.example` documents the default:
+
+```
+VITE_API_BASE_URL=http://localhost:5221
+```
+
+Point this at wherever the backend is actually running (e.g. `http://localhost:8080` if you're running it via `docker-compose` — see the backend README).
+
+## What's here
+
+- **Games** (`/games`) — search by name, filter by release year / genre / publisher, paginated table.
+- **Publishers** (`/publishers`) — search by name, paginated table.
+- Genre and publisher filter options are fetched live from `GET /api/genres` and `GET /api/publishers`, not hardcoded.
+- Theme toggle (Auto / Light / Dark) in the header — "Auto" follows the OS preference; an explicit choice is persisted to `localStorage` and overrides it.
+
+No write operations (create/update/delete) yet — the backend only exposes GET endpoints so far.
+
+## Scripts
+
+```bash
+npm run dev       # start the dev server
+npm run build     # type-check (tsc -b) and build for production
+npm run lint      # eslint
+npm run preview   # preview a production build locally
+```
 
 ## React Compiler
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+The React Compiler is enabled (`babel-plugin-react-compiler` via `@rolldown/plugin-babel` in `vite.config.ts`). This is also why the `react-hooks` ESLint rules are strict about patterns like calling `setState` synchronously inside an effect — see the hooks in `src/hooks/` for the patterns used to stay compliant (e.g. deriving `loading` instead of resetting it eagerly).
