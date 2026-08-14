@@ -1,7 +1,6 @@
 using Game_Library_Service.Common.Mediator;
 using Game_Library_Service.Common.Mediator.Interfaces;
 using Game_Library_Service.Data.Contexts;
-using Game_Library_Service.Data.Enums;
 using Game_Library_Service.Features.Game_Lib_FE.Controllers;
 using Game_Library_Service.Features.Game_Lib_FE.Logic;
 using Game_Library_Service.Tests.Data.Builders;
@@ -92,11 +91,14 @@ namespace Game_Library_Service.Tests.Features.Game_Lib_FE.Controllers.GamesContr
         public async Task GetGames_FilterByGenre_ReturnsOnlyMatchingGenre()
         {
             // Arrange
-            await new GameBuilder().WithName("Racer").WithGenre(Genre.Racing).BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
-            await new GameBuilder().WithName("Fighter").WithGenre(Genre.Fighting).BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
+            var racing = await new GenreBuilder().WithName("Racing").BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
+            var fighting = await new GenreBuilder().WithName("Fighting").BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
+
+            await new GameBuilder().WithName("Racer").WithGenre(racing).BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
+            await new GameBuilder().WithName("Fighter").WithGenre(fighting).BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
 
             // Act
-            var result = await _controller.GetGames(null, null, Genre.Racing, null, 1, TestContext.Current.CancellationToken);
+            var result = await _controller.GetGames(null, null, racing.Id, null, 1, TestContext.Current.CancellationToken);
 
             // Assert
             var ok = Assert.IsType<OkObjectResult>(result.Result);
@@ -133,23 +135,25 @@ namespace Game_Library_Service.Tests.Features.Game_Lib_FE.Controllers.GamesContr
         {
             // Arrange
             var nintendo = await new PublisherBuilder().WithName("Nintendo").BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
+            var adventure = await new GenreBuilder().WithName("Adventure").BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
+            var racing = await new GenreBuilder().WithName("Racing").BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
 
             await new GameBuilder()
                 .WithName("Zelda: Breath of the Wild")
                 .WithReleaseYear(2017)
-                .WithGenre(Genre.Adventure)
+                .WithGenre(adventure)
                 .WithPublisher(nintendo)
                 .BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
 
             await new GameBuilder()
                 .WithName("Mario Kart 8")
                 .WithReleaseYear(2017)
-                .WithGenre(Genre.Racing)
+                .WithGenre(racing)
                 .WithPublisher(nintendo)
                 .BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
 
             // Act
-            var result = await _controller.GetGames("zelda", 2017, Genre.Adventure, nintendo.Id, 1, TestContext.Current.CancellationToken);
+            var result = await _controller.GetGames("zelda", 2017, adventure.Id, nintendo.Id, 1, TestContext.Current.CancellationToken);
 
             // Assert
             var ok = Assert.IsType<OkObjectResult>(result.Result);
@@ -230,10 +234,13 @@ namespace Game_Library_Service.Tests.Features.Game_Lib_FE.Controllers.GamesContr
         public async Task GetGames_NoResultsMatchFilter_ReturnsEmptyItemsWithZeroTotals()
         {
             // Arrange
-            await new GameBuilder().WithName("Some Game").WithGenre(Genre.Action).BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
+            var action = await new GenreBuilder().WithName("Action").BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
+            var horror = await new GenreBuilder().WithName("Horror").BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
+
+            await new GameBuilder().WithName("Some Game").WithGenre(action).BuildAndAddAsync(_dbContext, TestContext.Current.CancellationToken);
 
             // Act
-            var result = await _controller.GetGames(null, null, Genre.Horror, null, 1, TestContext.Current.CancellationToken);
+            var result = await _controller.GetGames(null, null, horror.Id, null, 1, TestContext.Current.CancellationToken);
 
             // Assert
             var ok = Assert.IsType<OkObjectResult>(result.Result);
