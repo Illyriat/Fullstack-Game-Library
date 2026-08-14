@@ -29,6 +29,11 @@ namespace Game_Library_Service.Data.Contexts
         public virtual DbSet<Publisher> Publishers { get; set; }
 
         /// <summary>
+        /// Genres table
+        /// </summary>
+        public virtual DbSet<Genre> Genres { get; set; }
+
+        /// <summary>
         /// Configures the database model by applying entity configurations and global query filters.
         /// </summary>
         /// <param name="builder">The model builder used to configure the database model.</param>
