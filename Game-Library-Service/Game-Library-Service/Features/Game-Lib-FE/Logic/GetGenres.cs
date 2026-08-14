@@ -5,33 +5,18 @@ using Microsoft.EntityFrameworkCore;
 namespace Game_Library_Service.Features.Game_Lib_FE.Logic
 {
     /// <summary>
-    /// Retrieves a paginated, filterable list of games.
+    /// Retrieves a paginated, filterable list of genres.
     /// </summary>
-    public class GetGames
+    public class GetGenres
     {
         public const int PageSize = 50;
 
         public class Query : IQuery<Result>
         {
             /// <summary>
-            /// Filters games whose name contains this value (case-insensitive).
+            /// Filters genres whose name contains this value (case-insensitive).
             /// </summary>
             public string? Name { get; init; }
-
-            /// <summary>
-            /// Filters games released in this exact year.
-            /// </summary>
-            public int? ReleaseYear { get; init; }
-
-            /// <summary>
-            /// Filters games by genre.
-            /// </summary>
-            public int? GenreId { get; init; }
-
-            /// <summary>
-            /// Filters games by publisher.
-            /// </summary>
-            public int? PublisherId { get; init; }
 
             /// <summary>
             /// 1-based page number. Defaults to the first page.
@@ -41,22 +26,17 @@ namespace Game_Library_Service.Features.Game_Lib_FE.Logic
 
         public class Result
         {
-            public List<GameSummary> Items { get; init; } = [];
+            public List<GenreSummary> Items { get; init; } = [];
             public int Page { get; init; }
             public int PageSize { get; init; }
             public int TotalCount { get; init; }
             public int TotalPages { get; init; }
         }
 
-        public class GameSummary
+        public class GenreSummary
         {
             public int Id { get; init; }
             public string Name { get; init; } = string.Empty;
-            public int ReleaseYear { get; init; }
-            public int GenreId { get; init; }
-            public string GenreName { get; init; } = string.Empty;
-            public int? PublisherId { get; init; }
-            public string? PublisherName { get; init; }
         }
 
         public class Handler : IQueryHandler<Query, Result>
@@ -76,48 +56,28 @@ namespace Game_Library_Service.Features.Game_Lib_FE.Logic
             {
                 var page = query.Page < 1 ? 1 : query.Page;
 
-                var games = _context.Games.AsNoTracking();
+                var genres = _context.Genres.AsNoTracking();
 
                 if (!string.IsNullOrWhiteSpace(query.Name))
                 {
                     var name = query.Name.Trim();
 
-                    games = _useSqlServerCollation
-                        ? games.Where(g => EF.Functions.Like(EF.Functions.Collate(g.Name, SearchCollation), $"%{name}%"))
-                        : games.Where(g => g.Name.ToLower().Contains(name.ToLowerInvariant()));
+                    genres = _useSqlServerCollation
+                        ? genres.Where(g => EF.Functions.Like(EF.Functions.Collate(g.Name, SearchCollation), $"%{name}%"))
+                        : genres.Where(g => g.Name.ToLower().Contains(name.ToLowerInvariant()));
                 }
 
-                if (query.ReleaseYear.HasValue)
-                {
-                    games = games.Where(g => g.ReleaseYear == query.ReleaseYear.Value);
-                }
+                var totalCount = await genres.CountAsync(token);
 
-                if (query.GenreId.HasValue)
-                {
-                    games = games.Where(g => g.GenreId == query.GenreId.Value);
-                }
-
-                if (query.PublisherId.HasValue)
-                {
-                    games = games.Where(g => g.PublisherId == query.PublisherId.Value);
-                }
-
-                var totalCount = await games.CountAsync(token);
-
-                var items = await games
+                var items = await genres
                     .OrderBy(g => g.Name)
                     .ThenBy(g => g.Id)
                     .Skip((page - 1) * PageSize)
                     .Take(PageSize)
-                    .Select(g => new GameSummary
+                    .Select(g => new GenreSummary
                     {
                         Id = g.Id,
-                        Name = g.Name,
-                        ReleaseYear = g.ReleaseYear,
-                        GenreId = g.GenreId,
-                        GenreName = g.Genre.Name,
-                        PublisherId = g.PublisherId,
-                        PublisherName = g.Publisher != null ? g.Publisher.Name : null
+                        Name = g.Name
                     })
                     .ToListAsync(token);
 

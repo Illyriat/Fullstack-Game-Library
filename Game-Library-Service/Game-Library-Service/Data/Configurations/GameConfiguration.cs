@@ -23,13 +23,8 @@ namespace Game_Library_Service.Data.Configurations
                 .IsRequired()
                 .HasMaxLength(200);
 
-            builder.Property(g => g.Genre)
-                .IsRequired()
-                .HasConversion<string>()
-                .HasMaxLength(50);
-
-            builder.HasIndex(g => g.Genre)
-                .HasDatabaseName("IX_Games_Genre");
+            builder.HasIndex(g => g.GenreId)
+                .HasDatabaseName("IX_Games_GenreId");
 
             builder.HasIndex(g => g.PublisherId)
                 .HasDatabaseName("IX_Games_PublisherId");

@@ -16,6 +16,7 @@ namespace Game_Library_Service.Data.Extensions
         {
             modelBuilder.Entity<Game>().HasQueryFilter(g => !g.Deleted);
             modelBuilder.Entity<Publisher>().HasQueryFilter(p => !p.Deleted);
+            modelBuilder.Entity<Genre>().HasQueryFilter(g => !g.Deleted);
 
             // Add new entity query filters here as you create them
         }

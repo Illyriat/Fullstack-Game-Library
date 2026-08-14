@@ -16,6 +16,7 @@ namespace Game_Library_Service.Data.Extensions
         {
             modelBuilder.ApplyConfiguration(new GameConfiguration());
             modelBuilder.ApplyConfiguration(new PublisherConfiguration());
+            modelBuilder.ApplyConfiguration(new GenreConfiguration());
 
             // Add new entity configurations here as you create them
         }

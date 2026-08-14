@@ -1,5 +1,3 @@
-using Game_Library_Service.Data.Enums;
-
 namespace Game_Library_Service.Data.Entities
 {
     public class Game : AuditableEntity
@@ -7,7 +5,16 @@ namespace Game_Library_Service.Data.Entities
         public int Id { get; set; }
         public required string Name { get; set; }
         public int ReleaseYear { get; set; }
-        public required Genre Genre { get; set; }
+
+        /// <summary>
+        /// Genre ID (foreign key)
+        /// </summary>
+        public required int GenreId { get; set; }
+
+        /// <summary>
+        /// Navigation property to the genre
+        /// </summary>
+        public virtual Genre Genre { get; set; } = null!;
 
         /// <summary>
         /// Publisher ID (foreign key)
