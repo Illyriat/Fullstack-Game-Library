@@ -1,1 +1,79 @@
-###
+name: Build & Test
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  changes:
+    name: Detect changed paths
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'Game-Library-Service/**'
+            frontend:
+              - 'Game-Library-FE/**'
+
+  backend-tests:
+    name: Backend tests
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore Game-Library-Service.slnx
+        working-directory: Game-Library-Service
+
+      - name: Build
+        run: dotnet build Game-Library-Service.slnx --no-restore --configuration Release
+        working-directory: Game-Library-Service
+
+      - name: Test
+        run: dotnet test Game-Library-Service.slnx --no-build --configuration Release
+        working-directory: Game-Library-Service
+
+  frontend-tests:
+    name: Frontend tests
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: Game-Library-FE/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: Game-Library-FE
+
+      - name: Lint
+        run: npm run lint
+        working-directory: Game-Library-FE
+
+      - name: Test
+        run: npm test
+        working-directory: Game-Library-FE
+
+      - name: Build
+        run: npm run build
+        working-directory: Game-Library-FE
