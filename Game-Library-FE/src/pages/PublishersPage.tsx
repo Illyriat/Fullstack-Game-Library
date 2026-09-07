@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { AddPublisherModal } from '../components/AddPublisherModal'
 import { Pagination } from '../components/Pagination'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import { usePublishers } from '../hooks/usePublishers'
@@ -6,6 +7,7 @@ import { usePublishers } from '../hooks/usePublishers'
 export function PublishersPage() {
   const [name, setName] = useState('')
   const [page, setPage] = useState(1)
+  const [isAddModalOpen, setAddModalOpen] = useState(false)
 
   const debouncedName = useDebouncedValue(name, 300)
 
@@ -14,16 +16,26 @@ export function PublishersPage() {
     [debouncedName, page],
   )
 
-  const { data, loading, error } = usePublishers(publishersParams)
+  const { data, loading, error, refetch } = usePublishers(publishersParams)
 
   function handleNameChange(value: string) {
     setName(value)
     setPage(1)
   }
 
+  function handlePublisherCreated() {
+    setAddModalOpen(false)
+    refetch()
+  }
+
   return (
     <section>
-      <h2>Publishers</h2>
+      <div className="page-header">
+        <h2>Publishers</h2>
+        <button type="button" className="primary" onClick={() => setAddModalOpen(true)}>
+          Add Publisher
+        </button>
+      </div>
 
       <form className="filters" onSubmit={(e) => e.preventDefault()}>
         <label>
@@ -36,6 +48,10 @@ export function PublishersPage() {
           />
         </label>
       </form>
+
+      {isAddModalOpen && (
+        <AddPublisherModal onClose={() => setAddModalOpen(false)} onCreated={handlePublisherCreated} />
+      )}
 
       {error && <p className="error">{error}</p>}
       {loading && <p>Loading publishers...</p>}
