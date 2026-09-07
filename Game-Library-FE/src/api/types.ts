@@ -43,3 +43,12 @@ export interface GetGenresParams {
   name?: string
   page: number
 }
+
+export interface CreatePublisherRequest {
+  name: string
+}
+
+export interface ApiErrorResponse {
+  error: string
+  errorKey: string
+}
