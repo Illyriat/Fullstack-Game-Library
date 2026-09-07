@@ -21,6 +21,7 @@ namespace Game_Library_Service.Common.Extensions.Startup
             services.AddScoped<IQueryHandler<GetGames.Query, GetGames.Result>, GetGames.Handler>();
             services.AddScoped<IQueryHandler<GetPublishers.Query, GetPublishers.Result>, GetPublishers.Handler>();
             services.AddScoped<IQueryHandler<GetGenres.Query, GetGenres.Result>, GetGenres.Handler>();
+            services.AddScoped<ICommandHandler<CreatePublisher.Command, CreatePublisher.Result>, CreatePublisher.Handler>();
         }
     }
 }

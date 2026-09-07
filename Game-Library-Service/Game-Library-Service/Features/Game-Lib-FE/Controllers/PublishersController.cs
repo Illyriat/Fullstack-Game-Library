@@ -35,5 +35,19 @@ namespace Game_Library_Service.Features.Game_Lib_FE.Controllers
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Creates a new publisher.
+        /// </summary>
+        [HttpPost]
+        [ApiExplorerSettings(GroupName = "v1")]
+        public async Task<ActionResult<CreatePublisher.Result>> CreatePublisher(
+            [FromBody] CreatePublisher.Command command,
+            CancellationToken cancellationToken)
+        {
+            var result = await _mediator.SendCommandAsync<CreatePublisher.Command, CreatePublisher.Result>(command, cancellationToken);
+
+            return StatusCode(StatusCodes.Status201Created, result);
+        }
     }
 }
