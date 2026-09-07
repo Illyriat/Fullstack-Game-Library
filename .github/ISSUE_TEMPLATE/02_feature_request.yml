@@ -1,0 +1,40 @@
+name: "Feature Request"
+description: Suggest a new feature or improvement for the Ranckors Baggage addon
+title: "[Feature] <summary of the suggestion>"
+labels: [enhancement]
+body:
+  - type: textarea
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe what you're missing or want to improve.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Proposed solution
+      description: What would you like the app to do instead?
+      placeholder: |
+        Example:
+        Manage/ Process Data from differently.
+
+  - type: textarea
+    attributes:
+      label: Optional UI or behavior suggestions
+      description: Describe the desired user experience, UI design, or behavior.
+
+  - type: checkboxes
+    attributes:
+      label: Affected areas
+      description: Which parts of the addon does this impact?
+      options:
+        - label: Settings Window
+        - label: Main Display UI
+        - label: Event Hooks
+        - label: Data Processing
+        - label: Other (please specify below)
+
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Any extra thoughts, examples, or mockups?

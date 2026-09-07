@@ -1,4 +1,6 @@
 import type {
+  ApiErrorResponse,
+  CreatePublisherRequest,
   GameSummary,
   GenreSummary,
   GetGamesParams,
@@ -23,14 +25,39 @@ function buildQuery(params: Record<string, string | number | undefined>): string
   return query ? `?${query}` : ''
 }
 
+async function extractErrorMessage(response: Response, path: string): Promise<string> {
+  try {
+    const body = (await response.json()) as ApiErrorResponse
+    if (body.error) return body.error
+  } catch {
+    // Response body wasn't valid JSON - fall through to the generic message.
+  }
+
+  return `Request to ${path} failed with status ${response.status}`
+}
+
 async function getJson<T>(path: string): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`)
 
   if (!response.ok) {
-    throw new Error(`Request to ${path} failed with status ${response.status}`)
+    throw new Error(await extractErrorMessage(response, path))
   }
 
   return (await response.json()) as T
+}
+
+async function postJson<TBody, TResult>(path: string, body: TBody): Promise<TResult> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+
+  if (!response.ok) {
+    throw new Error(await extractErrorMessage(response, path))
+  }
+
+  return (await response.json()) as TResult
 }
 
 export function getGames(params: GetGamesParams): Promise<PaginatedResult<GameSummary>> {
@@ -52,6 +79,10 @@ export function getPublishers(params: GetPublishersParams): Promise<PaginatedRes
   })
 
   return getJson<PaginatedResult<PublisherSummary>>(`/api/publishers${query}`)
+}
+
+export function createPublisher(request: CreatePublisherRequest): Promise<PublisherSummary> {
+  return postJson<CreatePublisherRequest, PublisherSummary>('/api/publishers', request)
 }
 
 export function getGenres(params: GetGenresParams): Promise<PaginatedResult<GenreSummary>> {

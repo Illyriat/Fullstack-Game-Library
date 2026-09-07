@@ -1,0 +1,38 @@
+name: "Bug Report"
+description: Report a bug or unexpected behavior in the addon
+title: "[Bug] <summary of the problem>"
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: What happened?
+      description: Describe what went wrong. What did you expect, and what actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: List detailed steps to reproduce the issue.
+      placeholder: |
+        1. Load App
+        2. Change a toggle
+        3. Observe the error
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Screenshot or error log
+      description: Paste any errors or add screenshots if available.
+      placeholder: Paste the error message or upload a screenshot
+
+  - type: input
+    attributes:
+      label: Version
+      placeholder: e.g. v9.3.5
+
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Any other info that might help
